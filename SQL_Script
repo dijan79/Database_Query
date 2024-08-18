@@ -1,0 +1,274 @@
+create DATABASE Prairie_Sports_Club;
+ 
+CREATE TABLE Prairie_Sports_Club.MemberTypes (
+    MemberTypeID INT PRIMARY KEY,
+    MemberType VARCHAR(50)
+);
+ 
+CREATE TABLE Prairie_Sports_Club.PaymentMethods (
+    PaymentMethodID INT PRIMARY KEY,
+    PaymentMethod VARCHAR(50)
+);
+ 
+CREATE TABLE Prairie_Sports_Club.Members (
+    MemberID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Address VARCHAR(100),
+    TelNumber VARCHAR(15),
+    MemberTypeID INT,
+    SubscriptionAmount DECIMAL(10, 2),
+    PaymentMethodID INT,
+    FOREIGN KEY (MemberTypeID) REFERENCES MemberTypes(MemberTypeID),
+    FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
+);
+ 
+CREATE TABLE Prairie_Sports_Club.Sports (
+    SportID INT PRIMARY KEY,
+    SportName VARCHAR(50)
+);
+ 
+CREATE TABLE Prairie_Sports_Club.Leagues (
+    LeagueID INT PRIMARY KEY,
+    LeagueName VARCHAR(50),
+    ContactName VARCHAR(50),
+    TelNumber VARCHAR(15)
+);
+ 
+CREATE TABLE MainTeams (
+    TeamID INT PRIMARY KEY,
+    TeamName VARCHAR(50),
+    SportID INT,
+    LeagueID INT,
+    SeasonStartDate DATE,
+    SeasonEndDate DATE,
+    FOREIGN KEY (SportID) REFERENCES Sports(SportID),
+    FOREIGN KEY (LeagueID) REFERENCES Leagues(LeagueID)
+);
+ 
+CREATE TABLE OpponentTeams (
+    OpponentID INT PRIMARY KEY,
+    OpponentName VARCHAR(50),
+    SportID INT,
+    LeagueID INT,
+    SeasonStartDate DATE,
+    SeasonEndDate DATE,
+    FOREIGN KEY (SportID) REFERENCES Sports(SportID),
+    FOREIGN KEY (LeagueID) REFERENCES Leagues(LeagueID)
+);
+ 
+ 
+CREATE TABLE Prairie_Sports_Club.TeamMembers (
+    TeamMemberID INT PRIMARY KEY,
+    TeamID INT,
+    MemberID INT,
+    IsCaptain BOOLEAN,
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID),
+    FOREIGN KEY (MemberID) REFERENCES Members(MemberID)
+);
+ 
+CREATE TABLE Fixtures (
+    FixtureID INT PRIMARY KEY,
+    MainTeamID INT,
+    OpponentID INT,
+    Location VARCHAR(100),
+    Result VARCHAR(10),
+    Score VARCHAR(10),
+    Date DATE,
+    FOREIGN KEY (MainTeamID) REFERENCES Teams(TeamID),
+    FOREIGN KEY (OpponentID) REFERENCES OpponentTeams(OpponentID)
+);
+ 
+use Prairie_Sports_Club;
+SHOW TABLES LIKE 'Teams';
+ 
+ 
+-- Insert member types
+INSERT INTO MemberTypes (MemberTypeID, MemberType) VALUES
+(1, 'Social'),
+(2, 'Full'),
+(3, 'Team');
+SELECT * FROM Prairie_Sports_Club.MemberTypes;
+-- Insert payment methods
+INSERT INTO PaymentMethods (PaymentMethodID, PaymentMethod) VALUES
+(1, 'Debit Card'),
+(2, 'Credit Card'),
+(3, 'Direct Debit'),
+(4, 'Cash');
+SELECT * FROM Prairie_Sports_Club.PaymentMethods;
+-- Insert members
+INSERT INTO Members (MemberID, FirstName, LastName, Address, TelNumber, MemberTypeID, SubscriptionAmount, PaymentMethodID) VALUES
+(1, 'Jake', 'Smith', '12 Olivier Lane, St Albans, Herts, AL1 5TH', '07678887675', 3, 100, 3),
+(2, 'Penny', 'O\'Reilly', 'The Nest, Crows Lane, Harpenden, Herts, AL3 6TY', '08767545321', 3, 100, 3),
+(3, 'Humerah', 'Kahn', 'Flat 6, Station Road, Letchworth, Herts, SG5 1AG', '07678089098', 2, 150, 2),
+(4, 'Paul', 'Connor', '45 High Street, St Albans, Herts, AL3 4TH', '07675434561', 3, 100, 4),
+(5, 'Jean-Paul', 'Croix', '21 Roman Road, St Albans, Herts, AL2 7YH', '07876546547', 2, 150, 2),
+(6, 'Seamus', 'O\'Malley', 'The Hushlings, Petty Lane, Harpenden, Herts, AL3 4TY', '07789098089', 1, 75, 1),
+(7, 'Katie', 'Fergueson', '13 Manor Crescent, St Albans, Herts, AL4 5YT', '07678089998', 1, 75, 3);
+SELECT * FROM Prairie_Sports_Club.Members;
+ 
+-- Insert sports
+INSERT INTO Sports (SportID, SportName) VALUES
+(1, 'Football'),
+(2, 'Golf');
+SELECT * FROM Prairie_Sports_Club.Sports;
+-- Insert leagues
+INSERT INTO Leagues (LeagueID, LeagueName, ContactName, TelNumber) VALUES
+(1, 'FB1', 'Kelly Holmes', '0774859965'),
+(2, 'Community 1', 'Ifzal Khan', '0774858521');
+SELECT * FROM Prairie_Sports_Club.Leagues;
+-- Insert teams
+INSERT INTO MainTeams (TeamID, TeamName, SportID, LeagueID, SeasonStartDate, SeasonEndDate) VALUES
+(1, 'Prairie Dogs', 1, 1, '2017-09-09', '2018-05-04'),
+(2, 'Prairie Shots', 2, 2, '2017-08-15', '2018-06-06');
+ 
+SELECT * FROM Prairie_Sports_Club.MainTeams;
+-- Insert team members
+INSERT INTO TeamMembers (TeamMemberID, TeamID, MemberID, IsCaptain) VALUES
+(1, 1, 6, TRUE),
+(2, 2, 5, TRUE),
+(3, 1, 4, FALSE),
+(4, 1, 1, FALSE),
+(5, 2, 7, FALSE);
+SELECT * FROM Prairie_Sports_Club.TeamMembers;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+INSERT INTO OpponentTeams (OpponentID, OpponentName, SportID, LeagueID, SeasonStartDate, SeasonEndDate) VALUES
+(1, 'Lions', 1, 1, '2017-09-01', '2018-05-01'),
+(2, 'Harriers', 1, 1, '2017-09-01', '2018-05-01'),
+(3, 'Colne Ravens', 1, 1, '2017-09-01', '2018-05-01'),
+(4, 'Craven Edge', 1, 1, '2017-09-01', '2018-05-01'),
+(5, 'Furious', 1, 1, '2017-09-01', '2018-05-01'),
+(6, 'Argents', 2, 2, '2017-09-01', '2018-05-01');
+SELECT * FROM Prairie_Sports_Club.OpponentTeams;
+ 
+ 
+INSERT INTO Fixtures (FixtureID, MainTeamID, OpponentID, Location, Result, Score, Date) VALUES
+(1, 1, 1, 'Home', 'Win', '2:1', '2017-09-09'),  
+(2, 1, 2, 'Away', 'Lose', '5:1', '2017-09-14'),  
+(3, 1, 3, 'Home', 'Lose', '2:1', '2017-09-21'), 
+(4, 1, 4, 'Home', 'Win', '4:3', '2017-09-28'),   
+(5, 1, 5, 'Away', 'Draw', '4:4', '2017-10-25'),  
+(6, 2, 6, 'Away', 'Win', '2:1', '2017-11-11');   
+ 
+SELECT * FROM Prairie_Sports_Club.Fixtures;
+ 
+ 
+ 
+-- question 7
+SELECT Members.FirstName, Members.LastName
+FROM Prairie_Sports_Club.TeamMembers
+INNER JOIN Prairie_Sports_Club.Members ON TeamMembers.MemberID = Members.MemberID
+ORDER BY Members.LastName ASC;
+ 
+ 
+-- question 8
+SELECT *
+FROM Prairie_Sports_Club.Fixtures
+WHERE Location = 'Home'
+ORDER BY Date DESC;
+ 
+ 
+-- question 9
+ 
+SELECT COUNT(*) AS TotalWins
+FROM Prairie_Sports_Club.Fixtures
+WHERE Result = 'Win';
+ 
+ 
+-- question 10
+ 
+SELECT *
+FROM Prairie_Sports_Club.Fixtures
+WHERE Result = 'Lose'
+ORDER BY Date ASC;
+ 
+-- question 11
+SELECT Members.FirstName, Members.LastName, MemberTypes.MemberType
+FROM Prairie_Sports_Club.Members
+INNER JOIN Prairie_Sports_Club.MemberTypes ON Members.MemberTypeID = MemberTypes.MemberTypeID
+WHERE Members.PaymentMethodID = (SELECT PaymentMethodID FROM Prairie_Sports_Club.PaymentMethods WHERE PaymentMethod = 'Direct Debit')
+GROUP BY MemberTypes.MemberType, Members.FirstName, Members.LastName;
+ 
+-- question 12
+UPDATE Prairie_Sports_Club.Members
+SET SubscriptionAmount = 120
+WHERE MemberTypeID = (SELECT MemberTypeID FROM Prairie_Sports_Club.MemberTypes WHERE MemberType = 'Team');
+ 
+SELECT MemberID, FirstName, LastName, SubscriptionAmount
+FROM Prairie_Sports_Club.Members
+WHERE MemberTypeID = (SELECT MemberTypeID FROM Prairie_Sports_Club.MemberTypes WHERE MemberType = 'Team');
+ 
+ 
+-- question 13
+INSERT INTO Prairie_Sports_Club.MemberTypes (MemberTypeID, MemberType)
+VALUES (4, 'Casual');
+SELECT *
+FROM Prairie_Sports_Club.MemberTypes;
+ 
+ 
+-- question 14
+ 
+-- Update membership type for Jake Smith
+UPDATE Prairie_Sports_Club.Members
+SET MemberTypeID = (SELECT MemberTypeID FROM Prairie_Sports_Club.MemberTypes WHERE MemberType = 'Casual')
+WHERE FirstName = 'Jake' AND LastName = 'Smith';
+ 
+SELECT MemberID, FirstName, LastName, MemberTypeID
+FROM Prairie_Sports_Club.Members
+WHERE FirstName = 'Jake' AND LastName = 'Smith';
+ 
+ 
+DELETE FROM Prairie_Sports_Club.OpponentTeams
+WHERE OpponentName = 'Colne Ravens';
+SELECT *
+FROM Prairie_Sports_Club.OpponentTeams
+WHERE OpponentName = 'Colne Ravens';
+ 
+ 
+-- question 15
+SELECT AVG(SubscriptionAmount) AS AvgSubscription
+FROM Prairie_Sports_Club.Members
+WHERE MemberTypeID = (SELECT MemberTypeID FROM Prairie_Sports_Club.MemberTypes WHERE MemberType = 'Full');
+ 
+ 
+-- question 16
+ 
+SELECT COUNT(*) AS TotalCreditCardUsers
+FROM Prairie_Sports_Club.Members
+WHERE PaymentMethodID = (SELECT PaymentMethodID FROM Prairie_Sports_Club.PaymentMethods WHERE PaymentMethod = 'Credit Card');
+ 
+-- question 17
+ 
+SELECT MainTeams.TeamName, COUNT(Fixtures.FixtureID) AS TotalWins
+FROM Prairie_Sports_Club.Fixtures
+INNER JOIN Prairie_Sports_Club.MainTeams ON Fixtures.MainTeamID = MainTeams.TeamID
+WHERE Fixtures.Result = 'Win'
+GROUP BY MainTeams.TeamName;
+ 
+-- question 18
+ 
+SELECT MainTeams.TeamName, MIN(CAST(SUBSTRING_INDEX(Fixtures.Score, ':', 1) AS SIGNED)) AS MinScore, 
+       MAX(CAST(SUBSTRING_INDEX(Fixtures.Score, ':', 1) AS SIGNED)) AS MaxScore
+FROM Prairie_Sports_Club.Fixtures
+INNER JOIN Prairie_Sports_Club.MainTeams ON Fixtures.MainTeamID = MainTeams.TeamID
+GROUP BY MainTeams.TeamName;
+ 
+-- question 19
+ 
+SELECT MainTeams.TeamName, COUNT(Fixtures.FixtureID) AS TotalFixtures
+FROM Prairie_Sports_Club.Fixtures
+INNER JOIN Prairie_Sports_Club.MainTeams ON Fixtures.MainTeamID = MainTeams.TeamID
+GROUP BY MainTeams.TeamName;
+ 
+ 
+-- question 20
+SELECT Members.FirstName, Members.LastName, Members.SubscriptionAmount
+FROM Prairie_Sports_Club.Members
+WHERE Members.SubscriptionAmount > (SELECT AVG(SubscriptionAmount) FROM Prairie_Sports_Club.Members);
+ 
